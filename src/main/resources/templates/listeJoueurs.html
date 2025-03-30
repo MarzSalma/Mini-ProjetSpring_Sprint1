@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Liste des Joueurs</title>
+  <link rel="stylesheet" type="text/css" href="webjars/bootstrap/4.3.1/css/bootstrap.min.css"/>
+</head>
+<body>
+<div th:replace="template"></div>
+<div class="container mt-5">
+  <div class="card">
+    <div class="card-header">
+      Liste des Joueurs
+    </div>
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nom Joueur</th>
+          <th>Age</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="j : ${joueurs.content}">
+          <td th:text="${j.idJoueur}"></td>
+          <td th:text="${j.nomJoueur}"></td>
+          <td th:text="${j.age}"></td>
+          <td>
+            <a class="btn btn-danger" onclick="return confirm('Etes-vous sûr ?')"
+               th:href="@{supprimerJoueur(id=${j.idJoueur}, page=${currentPage}, size=${size})}">Supprimer</a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagination -->
+      <ul class="nav nav-pills">
+        <li th:each="page, status : ${page}">
+          <a th:class="${status.index == currentPage ? 'btn btn-primary' : 'btn btn-secondary'}"
+             th:href="@{/ListeJoueurs(page=${status.index}, size=${size})}"
+             th:text="${status.index + 1}"></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+</body>
+</html>
