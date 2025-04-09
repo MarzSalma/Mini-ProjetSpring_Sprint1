@@ -1,6 +1,8 @@
 package com.salma.joueurs.services;
 
 import java.util.List;
+
+import com.salma.joueurs.entities.Equipe;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.salma.joueurs.entities.Joueur;
 import com.salma.joueurs.repos.JoueurRepository;
@@ -45,6 +47,41 @@ public class JoueurServiceImpl implements JoueurService {
     @Override
     public Page<Joueur> getAllJoueursParPage(int page, int size) {
         return joueurRepository.findAll(PageRequest.of(page, size));
+    }
+
+    @Override
+    public List<Joueur> findByNomJoueur(String nom) {
+        return List.of();
+    }
+
+    @Override
+    public List<Joueur> findByNomJoueurContains(String nom) {
+        return List.of();
+    }
+
+    @Override
+    public List<Joueur> findByNomAge(String nom, Double age) {
+        return List.of();
+    }
+
+    @Override
+    public List<Joueur> findByEquipe(Equipe equipe) {
+        return List.of();
+    }
+
+    @Override
+    public List<Joueur> findByEquipeIdEquipe(Long idEquipe) {
+        return joueurRepository.findByEquipeIdEquipe(idEquipe);
+    }
+
+    @Override
+    public List<Joueur> findByOrderByNomJoueurAsc() {
+        return List.of();
+    }
+
+    @Override
+    public List<Joueur> trierJoueursNomsAge() {
+        return List.of();
     }
 
 }

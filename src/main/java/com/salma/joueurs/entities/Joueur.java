@@ -1,10 +1,8 @@
 package com.salma.joueurs.entities;
 
 import java.util.Date;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+
+import jakarta.persistence.*;
 
 @Entity
 public class Joueur {
@@ -14,6 +12,8 @@ public class Joueur {
     private String nomJoueur;
     private Double age;
     private Date dateNaissance;
+    @ManyToOne
+    private Equipe equipe;
 
     public Joueur() {
         super();
@@ -62,5 +62,13 @@ public class Joueur {
     public String toString() {
         return "Joueur [idJoueur=" + idJoueur + ", nomJoueur=" + nomJoueur + ", age=" + age
                 + ", dateNaissance=" + dateNaissance + "]";
+    }
+
+    public Equipe getEquipe() {
+        return equipe;
+    }
+
+    public void setEquipe(Equipe equipe) {
+        this.equipe = equipe;
     }
 }

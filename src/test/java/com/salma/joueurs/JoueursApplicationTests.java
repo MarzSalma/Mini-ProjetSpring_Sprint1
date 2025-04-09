@@ -1,5 +1,6 @@
 package com.salma.joueurs;
 
+import com.salma.joueurs.entities.Equipe;
 import com.salma.joueurs.entities.Joueur;
 import com.salma.joueurs.repos.JoueurRepository;
 import com.salma.joueurs.services.JoueurService;
@@ -20,7 +21,7 @@ class JoueursApplicationTests {
 
 	@Test
 	public void testCreateJoueur() {
-		Joueur joueur = new Joueur("Leonel Messi",37.0,new Date());
+		Joueur joueur = new Joueur("Robert Lewandowski",36.0,new Date());
 		joueurRepository.save(joueur);
 	}
 	@Test
@@ -33,7 +34,7 @@ class JoueursApplicationTests {
 	@Test
 	public void testUpdateJoueur()
 	{
-		Joueur j = joueurRepository.findById(2L).get();
+		Joueur j = joueurRepository.findById(1L).get();
 		j.setNomJoueur(("Cristiano Ronaldo"));
 		j.setAge(40.0);
 		joueurRepository.save(j);
@@ -54,6 +55,78 @@ class JoueursApplicationTests {
 			System.out.println(j);
 		}
 	}
+
+
+	@Test
+	public void testFindJoueurByNom()
+	{
+		List<Joueur> j = joueurRepository.findByNomJoueur("Lamine Yamal");
+		for (Joueur j1 : j)
+		System.out.println(j);
+	}
+
+	@Test
+	public void testFindJoueurByNomContains ()
+	{
+		List<Joueur> jou=joueurRepository.findByNomJoueurContains("luka");
+		for (Joueur j : jou)
+		{
+			System.out.println(j);
+		} }
+
+	@Test
+	public void testfindByNomAge(){
+		List<Joueur> jou = joueurRepository.findByNomAge("Lamine Yamal", 18.0);
+		for (Joueur j : jou){
+			System.out.println(j);
+		}
+		if (jou.isEmpty()) {
+			System.out.println("Aucun joueur trouvé !");
+		}
+
+	}
+
+	@Test
+	public void testfindByEquipe()
+	{
+		Equipe Eq = new Equipe();
+		Eq.setIdEquipe(1L);
+		List<Joueur> jou = joueurRepository.findByEquipe(Eq);
+		for (Joueur j : jou)
+		{
+			System.out.println(j);
+		}
+	}
+
+	@Test
+	public void findByEquipeIdEquipe(){
+		List<Joueur> jou = joueurRepository.findByEquipeIdEquipe(2L);
+		for (Joueur j : jou){
+			System.out.println(j);
+		}
+	}
+
+	@Test
+	public void testfindByOrderByNomJoueurAsc(){
+		List<Joueur> jou = joueurRepository.findByOrderByNomJoueurAsc();
+		for (Joueur j : jou){
+			System.out.println(j);
+		}
+	}
+
+	@Test
+	public void testTrierJoueursNomsAge(){
+		List<Joueur> jou = joueurRepository.trierJoueursNomsAge();
+		for (Joueur j : jou){
+			System.out.println(j);
+		}
+	}
+
+
+
+
+
+
 	@Test
 	public void testFindByNomJoueurContains()
 	{
@@ -64,6 +137,7 @@ class JoueursApplicationTests {
 		jou.getContent().forEach(j -> {System.out.println(j.toString());
 		});
 	}
+
 
 
 }
