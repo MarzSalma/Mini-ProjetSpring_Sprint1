@@ -14,6 +14,7 @@ public interface JoueurService {
     Joueur getJoueur(Long id);
     List<Joueur> getAllJoueurs();
     Page<Joueur> getAllJoueursParPage(int page, int size);
+    List<Equipe> getAllEquipes();
     List<Joueur> findByNomJoueur(String nom);
     List<Joueur> findByNomJoueurContains(String nom);
     List<Joueur> findByNomAge(String nom, Double age);

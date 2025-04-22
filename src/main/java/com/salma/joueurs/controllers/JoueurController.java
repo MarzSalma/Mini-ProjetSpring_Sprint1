@@ -1,12 +1,16 @@
 package com.salma.joueurs.controllers;
 
+import com.salma.joueurs.entities.Equipe;
 import com.salma.joueurs.entities.Joueur;
 import com.salma.joueurs.repos.JoueurRepository;
 import com.salma.joueurs.services.JoueurService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +27,12 @@ public class JoueurController {
     @Autowired
     private JoueurService joueurService;
 
+    @GetMapping("/accessDenied")
+    public String error()
+    {
+        return "accessDenied";
+    }
+
     @RequestMapping("/ListeJoueurs")
     public String ListeJoueurs(ModelMap modelMap,
             @RequestParam(name="page", defaultValue = "0") int page,
@@ -34,21 +44,41 @@ public class JoueurController {
         modelMap.addAttribute("currentPage", page);
         return "ListeJoueurs";
     }
-    @RequestMapping("/showJoueur")
-    public String showCreate(){
-        return "createJoueur";
+
+    @RequestMapping("/showCreate")
+    public String showCreate(ModelMap modelMap) {
+        List<Equipe> equipes = joueurService.getAllEquipes();
+        modelMap.addAttribute("joueur", new Joueur());
+        modelMap.addAttribute("mode", "new");
+        modelMap.addAttribute("equipes", equipes);
+        return "formJoueur";
     }
+
+
     @RequestMapping("/saveJoueur")
-    public String saveJoueur(@ModelAttribute ("joueur")Joueur joueur, @RequestParam("date")String date, ModelMap modelMap)
-            throws ParseException{
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date dateNaissance = dateFormat.parse(date);
-        joueur.setDateNaissance(dateNaissance);
-        Joueur savedJoueur = joueurService.saveJoueur(joueur);
-        String msg="joueur enregistré avec id" + savedJoueur.getIdJoueur();
-        modelMap.addAttribute("msg", msg);
-        return "createJoueur";
+    public String saveJoueur(@Valid @ModelAttribute("joueur") Joueur joueur,
+                             BindingResult bindingResult,
+                             @RequestParam(name = "page",defaultValue = "0")int page,
+                             @RequestParam (name = "size",defaultValue = "2")int size) {
+        int currentPage;
+        boolean isNew = false;
+        if (bindingResult.hasErrors()) {
+            return "formJoueur";
+        }
+        if (joueur.getIdJoueur() == null)
+            isNew = true;
+        joueurService.saveJoueur(joueur);
+        if (isNew) {
+            Page<Joueur> joueurs = joueurService.getAllJoueursParPage(page,size);
+            currentPage = joueurs.getTotalPages()-1;
+        }
+        else {
+            currentPage = page;
+        }
+        return ("redirect:/ListeJoueurs?page=" + currentPage+"&size=" + size);
     }
+
+
     @RequestMapping("/supprimerJoueur")
     public String supprimerJoueur(@RequestParam("id") Long id, ModelMap modelMap,
                                   @RequestParam(name="page",defaultValue = "0") int page,
@@ -64,10 +94,17 @@ public class JoueurController {
     }
 
     @RequestMapping("/modifierJoueur")
-    public String editerJoueur(@RequestParam("id") Long id, ModelMap modelMap) {
+    public String editerJoueur(@RequestParam("id") Long id, ModelMap modelMap,
+                               @RequestParam(name="page",defaultValue = "0") int page,
+                               @RequestParam(name="size",defaultValue = "2")int size) {
         Joueur j = joueurService.getJoueur(id);
+        List<Equipe> equipes = joueurService.getAllEquipes();
         modelMap.addAttribute("joueur", j);
-        return "editerJoueur";
+        modelMap.addAttribute("mode", "edit");
+        modelMap.addAttribute("equipes", equipes);
+        modelMap.addAttribute("page", page);
+        modelMap.addAttribute("size", size);
+        return "formJoueur";
     }
 
     @RequestMapping("/updateJoueur")
@@ -84,4 +121,9 @@ public class JoueurController {
         modelMap.addAttribute("joueurs", joueurs);
         return "listeJoueurs";
     }
+    @GetMapping(value = "/")
+    public String welcome() {
+        return "index";
+    }
+
 }

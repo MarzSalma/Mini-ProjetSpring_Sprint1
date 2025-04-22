@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.w3.org/1999/xhtml">
 
 <head>
   <meta charset="UTF-8">
@@ -21,6 +21,8 @@
           <th>ID</th>
           <th>Nom Joueur</th>
           <th>Age</th>
+          <th>Date Naissance</th>
+          <th>Equipe</th>
           <th>Actions</th>
         </tr>
         </thead>
@@ -29,10 +31,16 @@
           <td th:text="${j.idJoueur}"></td>
           <td th:text="${j.nomJoueur}"></td>
           <td th:text="${j.age}"></td>
-          <td>
-            <a class="btn btn-danger" onclick="return confirm('Etes-vous sûr ?')"
-               th:href="@{supprimerJoueur(id=${j.idJoueur}, page=${currentPage}, size=${size})}">Supprimer</a>
+          <td th:text="${j.dateNaissance}"></td>
+          <td th:if="${j.equipe != null}" th:text="${j.equipe.nomEquipe}"></td>
+          <td th:if="${j.equipe == null}" th:text="'Pas d equipe'"></td>
+          <td sec:authorize="hasAuthority('ADMIN')"><a class="btn btn-success"
+                                                       th:href="@{modifierJoueur(id=${j.idJoueur})}">Editer</a></td>
+          <td sec:authorize="hasAuthority('ADMIN')" ><a class="btn btn-danger" onclick="return confirm('Etes-vous sûr ?')"
+                                                        th:href="@{supprimerJoueur(id=${j.idJoueur},
+                                                        page=${currentPage},size=${size})}">Supprimer</a>
           </td>
+
         </tr>
         </tbody>
       </table>
@@ -42,7 +50,7 @@
         <li th:each="page, status : ${page}">
           <a th:class="${status.index == currentPage ? 'btn btn-primary' : 'btn btn-secondary'}"
              th:href="@{/ListeJoueurs(page=${status.index}, size=${size})}"
-             th:text="${status.index + 1}"></a>
+             th:text="${status.index}"></a>
         </li>
       </ul>
     </div>

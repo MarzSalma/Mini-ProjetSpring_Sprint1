@@ -3,6 +3,7 @@ package com.salma.joueurs.services;
 import java.util.List;
 
 import com.salma.joueurs.entities.Equipe;
+import com.salma.joueurs.repos.EquipeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.salma.joueurs.entities.Joueur;
 import com.salma.joueurs.repos.JoueurRepository;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 public class JoueurServiceImpl implements JoueurService {
     @Autowired
     JoueurRepository joueurRepository;
+    @Autowired
+    private EquipeRepository equipeRepository;
 
     @Override
     public Joueur saveJoueur(Joueur j) {
@@ -83,5 +86,9 @@ public class JoueurServiceImpl implements JoueurService {
     public List<Joueur> trierJoueursNomsAge() {
         return List.of();
     }
+
+    @Override
+    public List<Equipe> getAllEquipes() {
+        return equipeRepository.findAll();    }
 
 }

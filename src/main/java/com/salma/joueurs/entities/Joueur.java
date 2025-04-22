@@ -3,14 +3,24 @@ package com.salma.joueurs.entities;
 import java.util.Date;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import org.springframework.format.annotation.DateTimeFormat;
+
 
 @Entity
 public class Joueur {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idJoueur;
+    @NotNull
+    @Size(min = 4, max = 50)
     private String nomJoueur;
+    @Min(value = 16)
+    @Max(value = 50)
     private Double age;
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @PastOrPresent
     private Date dateNaissance;
     @ManyToOne
     private Equipe equipe;
