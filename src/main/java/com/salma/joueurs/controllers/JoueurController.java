@@ -22,6 +22,7 @@ import java.util.List;
 
 @Controller
 public class JoueurController {
+
     @Autowired
     JoueurRepository joueurRepository;
     @Autowired
@@ -42,6 +43,7 @@ public class JoueurController {
         modelMap.addAttribute("joueurs", joueurs);
         modelMap.addAttribute("page", new int[joueurs.getTotalPages()]);
         modelMap.addAttribute("currentPage", page);
+        modelMap.addAttribute("size", size);
         return "ListeJoueurs";
     }
 
@@ -123,6 +125,7 @@ public class JoueurController {
     }
     @GetMapping(value = "/")
     public String welcome() {
+
         return "index";
     }
 

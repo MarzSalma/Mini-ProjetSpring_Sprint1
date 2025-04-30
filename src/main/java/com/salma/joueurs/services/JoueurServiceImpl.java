@@ -1,9 +1,14 @@
 package com.salma.joueurs.services;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.salma.joueurs.dto.JoueurDTO;
 import com.salma.joueurs.entities.Equipe;
 import com.salma.joueurs.repos.EquipeRepository;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.salma.joueurs.entities.Joueur;
 import com.salma.joueurs.repos.JoueurRepository;
@@ -17,8 +22,10 @@ public class JoueurServiceImpl implements JoueurService {
     JoueurRepository joueurRepository;
     @Autowired
     private EquipeRepository equipeRepository;
+    @Autowired
+    ModelMapper modelMapper;
 
-    @Override
+      @Override
     public Joueur saveJoueur(Joueur j) {
         return joueurRepository.save(j);
     }
@@ -90,5 +97,68 @@ public class JoueurServiceImpl implements JoueurService {
     @Override
     public List<Equipe> getAllEquipes() {
         return equipeRepository.findAll();    }
+
+    /*@Override
+    public JoueurDTO convertEntityToDTO(Joueur j) {
+        JoueurDTO joueurDTO = new JoueurDTO();
+        joueurDTO.setIdJoueur(j.getIdJoueur());
+        joueurDTO.setNomJoueur(j.getNomJoueur());
+        joueurDTO.setAge(j.getAge());
+        joueurDTO.setDateDeNaissance(j.getDateNaissance());
+        joueurDTO.setEquipe(j.getEquipe());
+       // joueurDTO.setNomEquipe(j.getEquipe() != null ? j.getEquipe().getNomEquipe() : null);
+
+        return joueurDTO;
+    }*/
+    @Override
+    public JoueurDTO convertEntityToDTO(Joueur joueur) {
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
+        JoueurDTO dto = modelMapper.map(joueur, JoueurDTO.class);
+        return dto;
+    }
+
+    @Override
+    public JoueurDTO saveJoueurDto(Joueur j) {
+        return convertEntityToDTO(joueurRepository.save(j));
+    }
+
+    @Override
+    public JoueurDTO getJoueurDto(Long id) {
+        return convertEntityToDTO(joueurRepository.findById(id).get());
+    }
+
+    @Override
+    public List<JoueurDTO> getAllJoueursDto() {
+        return joueurRepository.findAll().stream()
+                .map(this::convertEntityToDTO)
+                .collect(Collectors.toList());
+    }
+
+
+    /*@Override
+    public Joueur convertDtoToEntity(JoueurDTO joueurDto) {
+        Joueur joueur = new Joueur();
+        joueur.setIdJoueur(joueurDto.getIdJoueur());
+        joueur.setNomJoueur(joueurDto.getNomJoueur());
+        joueur.setAge(joueurDto.getAge());
+        joueur.setDateNaissance(joueurDto.getDateDeNaissance());
+        joueur.setEquipe(joueurDto.getEquipe());
+        return joueur;
+    }*/
+    @Override
+    public Joueur convertDtoToEntity(JoueurDTO joueurDto){
+        Joueur joueur = new Joueur();
+        joueur = modelMapper.map(joueurDto, Joueur.class);
+        return joueur;
+    }
+
+    @Override
+    public JoueurDTO saveJoueur(JoueurDTO j) {
+        return convertEntityToDTO(joueurRepository.save(convertDtoToEntity(j)));
+    }
+    @Override
+    public  JoueurDTO updateJoueur(JoueurDTO j) {
+        return convertEntityToDTO(joueurRepository.save(convertDtoToEntity(j)));
+    }
 
 }
